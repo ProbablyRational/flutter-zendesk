@@ -1,3 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.codeheadlabs.zendesk">
+      <application android:theme="@style/Theme.AppCompat">
 </manifest>
