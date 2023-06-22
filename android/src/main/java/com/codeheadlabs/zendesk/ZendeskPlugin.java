@@ -18,6 +18,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 import java.util.ArrayList;
+import java.util.List;
 import zendesk.chat.Chat;
 import zendesk.chat.ChatConfiguration;
 import zendesk.chat.ChatEngine;
@@ -35,11 +36,6 @@ public class ZendeskPlugin implements FlutterPlugin, ActivityAware, ChatApi, Pro
   private Activity activity;
 
   public ZendeskPlugin() {}
-
-  public static void registerWith(Registrar registrar) {
-    ZendeskPlugin plugin = new ZendeskPlugin();
-    plugin.startListening(registrar.context(), registrar.messenger());
-  }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
@@ -110,7 +106,12 @@ public class ZendeskPlugin implements FlutterPlugin, ActivityAware, ChatApi, Pro
     }
 
     ChatConfiguration chatConfiguration =
-        ChatConfiguration.builder().withAgentAvailabilityEnabled(false).build();
+        ChatConfiguration.builder()
+                .withAgentAvailabilityEnabled(arg.getIsAgentAvailabilityEnabled())
+                .withPreChatFormEnabled(arg.getIsPreChatFormEnabled())
+                .withOfflineFormEnabled(arg.getIsOfflineFormEnabled())
+                .withTranscriptEnabled(arg.getIsChatTranscriptPromptEnabled())
+                .build();
 
     MessagingActivity.builder().withEngines(ChatEngine.engine()).show(activity, chatConfiguration);
   }
@@ -137,7 +138,7 @@ public class ZendeskPlugin implements FlutterPlugin, ActivityAware, ChatApi, Pro
   @Override
   public void addVisitorTags(VisitorTagsRequest arg) {
     final ProfileProvider profileProvider = getProfileProvider();
-    ArrayList raw = arg.getTags();
+    List<Object> raw = arg.getTags();
     ArrayList<String> tags = new ArrayList<>();
     for (Object o : raw) {
       if (o instanceof String) {
@@ -151,7 +152,7 @@ public class ZendeskPlugin implements FlutterPlugin, ActivityAware, ChatApi, Pro
   @Override
   public void removeVisitorTags(VisitorTagsRequest arg) {
     final ProfileProvider profileProvider = getProfileProvider();
-    ArrayList raw = arg.getTags();
+    List<Object> raw = arg.getTags();
     ArrayList<String> tags = new ArrayList<>();
     for (Object o : raw) {
       if (o instanceof String) {
